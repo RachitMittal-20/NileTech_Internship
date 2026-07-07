@@ -5,22 +5,33 @@ distinct applications on top of a shared design system and data layer.
 
 ## The two apps
 
-**Admin System** — `app/(admin)`
+**Admin System** — `app/admin` (URL prefix `/admin`)
 Internal tool for the Strong Path Diagnostics team: managing client
-organizations, test catalogs, orders, results, and staff access.
+organizations, test catalogs, orders, results, and staff access. Requires
+`profiles.role = 'admin'`.
 
-**Client Portal** — `app/(portal)`
+**Client Portal** — `app/portal` (URL prefix `/portal`)
 Used by corporate client organizations to schedule testing, view program
-status, and access their employees' results and reporting.
+status, and access their employees' results and reporting. Requires
+`profiles.role = 'client_admin'`.
 
 **Auth** — `app/(auth)`
-Shared sign-in / sign-up / password-reset flows for both apps. Which app a
-session is routed into is determined by the authenticated user's role, not by
-which auth page they used.
+Shared sign-in / forgot-password / reset-password flows for both apps, at
+`/login`, `/forgot-password`, and `/reset-password`. `(auth)` is a route
+group, so it organizes the codebase without adding a URL segment — unlike
+`admin`/`portal`, which are real segments because middleware needs to match
+on `/admin/*` and `/portal/*` in the URL. There is no sign-up page anywhere;
+accounts are created by an admin (invite flow) or the seed script in
+`docs/SETUP.md`. Which dashboard a session lands on after login is decided by
+the authenticated user's `profiles.role`, not by which auth page they used.
 
-`(admin)`, `(portal)`, and `(auth)` are Next.js route groups — they organize
-the codebase without adding a URL segment. Route protection and role-based
-redirects are enforced in middleware, not by folder structure alone.
+Route protection is enforced twice, deliberately: `middleware.ts` (via
+`lib/supabase/middleware.ts`) redirects unauthenticated requests to `/login`
+and wrong-role requests to `/403` before a protected page ever renders, and
+`app/admin/layout.tsx` / `app/portal/layout.tsx` re-check the role
+server-side as defense in depth. See `docs/SETUP.md` for the auth setup
+(seeding the first admin, disabling public sign-ups in the Supabase
+dashboard) and the security notes in the auth system's implementation.
 
 ## Shared layers
 
@@ -58,5 +69,7 @@ See `.env.example` for the environment variables this implies.
 
 ## Status
 
-This is the foundation: project scaffold, design system, and shared UI layer
-only. No admin or portal features are implemented yet.
+The foundation (project scaffold, design system, shared UI layer), the
+database schema, and the auth system (login, role-based routing, middleware
+protection, password reset, invite flow, admin seed script) are in place. No
+admin or portal features beyond placeholder dashboards are implemented yet.
