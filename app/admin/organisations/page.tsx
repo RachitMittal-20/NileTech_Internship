@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 import { OrganisationsToolbar } from "@/components/admin/organisations/organisations-toolbar"
 import { OrganisationsTable } from "@/components/admin/organisations/organisations-table"
-import { OrganisationsPagination } from "@/components/admin/organisations/organisations-pagination"
+import { ListPagination } from "@/components/shared/list-pagination"
 import {
   getOrganisationsList,
   type OrganisationListSort,
@@ -53,7 +53,7 @@ export default async function OrganisationsPage({
 
       <OrganisationsTable rows={rows} sort={sort} dir={dir} />
 
-      <OrganisationsPagination page={page} pageSize={pageSize} total={total} searchParams={params} />
+      <ListPagination page={page} pageSize={pageSize} total={total} searchParams={params} />
     </div>
   )
 }

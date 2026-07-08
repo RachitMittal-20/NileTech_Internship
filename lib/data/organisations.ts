@@ -132,14 +132,13 @@ export async function getOrganisation(id: string) {
   return data
 }
 
-export async function getOrganisationEmployees(orgId: string) {
+export async function getOrganisationEmployeeCount(orgId: string) {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { count } = await supabase
     .from("employees")
-    .select("id, full_name, email, phone, employee_code")
+    .select("*", { count: "exact", head: true })
     .eq("org_id", orgId)
-    .order("full_name", { ascending: true })
-  return data ?? []
+  return count ?? 0
 }
 
 export async function getOrganisationTestCycles(orgId: string) {
