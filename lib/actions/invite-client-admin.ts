@@ -1,5 +1,6 @@
 "use server"
 
+import { logAudit } from "@/lib/audit"
 import { createClient as createAdminClient } from "@/lib/supabase/admin"
 import { getProfile } from "@/lib/supabase/get-profile"
 
@@ -71,6 +72,14 @@ export async function inviteClientAdmin({
     await adminClient.auth.admin.deleteUser(data.user.id)
     return { error: "Could not finish setting up the account. Try again." }
   }
+
+  await logAudit(
+    { id: callerProfile.id, role: callerProfile.role },
+    "invite_client_admin",
+    "profiles",
+    data.user.id,
+    { email: normalizedEmail, org_id: orgId }
+  )
 
   return { success: true }
 }

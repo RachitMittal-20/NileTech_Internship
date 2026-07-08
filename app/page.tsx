@@ -40,10 +40,10 @@ export default function Home() {
           </div>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="/portal/login">Client Portal</Link>
+              <Link href="/login">Client Portal</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/admin/login">Admin Sign In</Link>
+              <Link href="/login">Admin Sign In</Link>
             </Button>
           </nav>
         </div>
@@ -66,13 +66,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
-                <Link href="/portal/login">
+                <Link href="/login">
                   Go to Client Portal
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/admin/login">Admin Sign In</Link>
+                <Link href="/login">Admin Sign In</Link>
               </Button>
             </div>
           </div>

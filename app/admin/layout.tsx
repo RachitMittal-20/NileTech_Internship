@@ -1,6 +1,9 @@
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { AppSidebar } from "@/components/admin/app-sidebar"
+import { SiteHeader } from "@/components/admin/site-header"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getProfile } from "@/lib/supabase/get-profile"
 
 // Defense in depth: middleware already gates /admin/*, but Server Components
@@ -17,9 +20,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/403")
   }
 
+  const cookieStore = await cookies()
+  const sidebarOpen = cookieStore.get("sidebar_state")?.value !== "false"
+
   return (
-    <DashboardShell profile={profile} surfaceLabel="Admin">
-      {children}
-    </DashboardShell>
+    <SidebarProvider defaultOpen={sidebarOpen}>
+      <AppSidebar />
+      <SidebarInset>
+        <SiteHeader profile={profile} />
+        <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
