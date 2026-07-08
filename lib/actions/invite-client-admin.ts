@@ -1,5 +1,7 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
+
 import { logAudit } from "@/lib/audit"
 import { createClient as createAdminClient } from "@/lib/supabase/admin"
 import { getProfile } from "@/lib/supabase/get-profile"
@@ -15,9 +17,7 @@ export interface InviteClientAdminResult {
   success?: boolean
 }
 
-// Called from the (future) org management screen in the Admin System. No UI
-// consumes this yet — it exists so the invite flow can be wired up without
-// blocking on that screen.
+// Called from the Portal Access tab on an organization's profile screen.
 //
 // Uses the Supabase Admin API (service role) to create the auth user and send
 // the invite email in one call, then creates the matching `profiles` row.
@@ -80,6 +80,8 @@ export async function inviteClientAdmin({
     data.user.id,
     { email: normalizedEmail, org_id: orgId }
   )
+
+  revalidatePath(`/admin/organisations/${orgId}`)
 
   return { success: true }
 }

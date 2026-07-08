@@ -13,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { adminNavItems } from "@/components/admin/nav-config"
+import { useBreadcrumbLabelContext } from "@/components/admin/breadcrumb-label-context"
 
 const LABELS: Record<string, string> = Object.fromEntries(
   adminNavItems.map((item) => [item.url.split("/").pop() ?? "", item.title])
@@ -30,6 +31,7 @@ function toLabel(segment: string) {
 
 export function AdminBreadcrumbs() {
   const pathname = usePathname()
+  const overrideLabel = useBreadcrumbLabelContext()?.label
   const segments = pathname.split("/").filter(Boolean).slice(1) // drop leading "admin"
 
   if (segments.length === 0) return null
@@ -51,7 +53,7 @@ export function AdminBreadcrumbs() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{toLabel(segment)}</BreadcrumbPage>
+                  <BreadcrumbPage>{overrideLabel ?? toLabel(segment)}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
                     <Link href={href}>{toLabel(segment)}</Link>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 
 import { AppSidebar } from "@/components/admin/app-sidebar"
 import { SiteHeader } from "@/components/admin/site-header"
+import { BreadcrumbLabelProvider } from "@/components/admin/breadcrumb-label-context"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getProfile } from "@/lib/supabase/get-profile"
 
@@ -24,12 +25,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const sidebarOpen = cookieStore.get("sidebar_state")?.value !== "false"
 
   return (
-    <SidebarProvider defaultOpen={sidebarOpen}>
-      <AppSidebar />
-      <SidebarInset>
-        <SiteHeader profile={profile} />
-        <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+    <BreadcrumbLabelProvider>
+      <SidebarProvider defaultOpen={sidebarOpen}>
+        <AppSidebar />
+        <SidebarInset>
+          <SiteHeader profile={profile} />
+          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </BreadcrumbLabelProvider>
   )
 }

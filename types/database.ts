@@ -1,7 +1,3 @@
-// Generated from the "strongpath-diagnostics" Supabase project (sjrhjvjjwlwszhtqijek).
-// Regenerate with: mcp__claude_ai_Supabase__generate_typescript_types, or
-// `supabase gen types typescript --project-id sjrhjvjjwlwszhtqijek` — do not hand-edit.
-
 export type Json =
   | string
   | number
@@ -304,11 +300,12 @@ export type Database = {
           billing_details: Json
           contact_email: string | null
           contact_name: string | null
+          contact_phone: string | null
           contract_type: string | null
           created_at: string
           id: string
           name: string
-          status: string
+          status: Database["public"]["Enums"]["organisation_status"]
           updated_at: string
         }
         Insert: {
@@ -316,11 +313,12 @@ export type Database = {
           billing_details?: Json
           contact_email?: string | null
           contact_name?: string | null
+          contact_phone?: string | null
           contract_type?: string | null
           created_at?: string
           id?: string
           name: string
-          status?: string
+          status?: Database["public"]["Enums"]["organisation_status"]
           updated_at?: string
         }
         Update: {
@@ -328,11 +326,12 @@ export type Database = {
           billing_details?: Json
           contact_email?: string | null
           contact_name?: string | null
+          contact_phone?: string | null
           contract_type?: string | null
           created_at?: string
           id?: string
           name?: string
-          status?: string
+          status?: Database["public"]["Enums"]["organisation_status"]
           updated_at?: string
         }
         Relationships: []
@@ -575,6 +574,7 @@ export type Database = {
       broadcast_status: "pending" | "sent" | "failed"
       cycle_employee_status: "expected" | "present" | "absent"
       cycle_request_status: "pending" | "approved" | "rejected" | "scheduled"
+      organisation_status: "active" | "archived"
       profile_role: "admin" | "client_admin"
       result_classification: "clear" | "flagged"
       test_cycle_status:
@@ -716,6 +716,7 @@ export const Constants = {
       broadcast_status: ["pending", "sent", "failed"],
       cycle_employee_status: ["expected", "present", "absent"],
       cycle_request_status: ["pending", "approved", "rejected", "scheduled"],
+      organisation_status: ["active", "archived"],
       profile_role: ["admin", "client_admin"],
       result_classification: ["clear", "flagged"],
       test_cycle_status: [
