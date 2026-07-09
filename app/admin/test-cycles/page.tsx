@@ -1,21 +1,67 @@
 import type { Metadata } from "next"
-import { FlaskConical } from "lucide-react"
 
-import { PlaceholderSection } from "@/components/admin/placeholder-section"
+import { TestCyclesToolbar } from "@/components/admin/test-cycles/test-cycles-toolbar"
+import { TestCyclesTable } from "@/components/admin/test-cycles/test-cycles-table"
+import { ListPagination } from "@/components/shared/list-pagination"
+import { getTestCyclesList } from "@/lib/data/test-cycles"
+import { getAllOrganisationsForSelect } from "@/lib/data/employees"
+import type { TestCycleStatus } from "@/lib/test-cycle-status"
+import { STATUS_PIPELINE } from "@/lib/test-cycle-status"
 
 export const metadata: Metadata = {
   title: "Test Cycles — Strong Path Admin",
 }
 
-export default function TestCyclesPage() {
+export default async function TestCyclesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}) {
+  const params = await searchParams
+
+  const status: TestCycleStatus | "all" = STATUS_PIPELINE.includes(
+    params.status as TestCycleStatus
+  )
+    ? (params.status as TestCycleStatus)
+    : "all"
+  const orgFilter = params.org ?? ""
+  const dateFrom = params.from ?? ""
+  const dateTo = params.to ?? ""
+  const page = Math.max(1, Number(params.page) || 1)
+  const pageSize = 15
+
+  const [{ rows, total }, organisations] = await Promise.all([
+    getTestCyclesList({
+      status,
+      orgId: orgFilter || undefined,
+      dateFrom: dateFrom || undefined,
+      dateTo: dateTo || undefined,
+      page,
+      pageSize,
+    }),
+    getAllOrganisationsForSelect(),
+  ])
+
   return (
-    <PlaceholderSection
-      icon={<FlaskConical strokeWidth={1.5} />}
-      title="Test Cycles"
-      description="Scheduled and in-progress testing cycles across all organisations."
-      emptyTitle="No test cycles yet"
-      emptyDescription="Create a test cycle to start scheduling on-site testing for an organisation."
-      ctaLabel="New Test Cycle"
-    />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Test Cycles</h1>
+        <p className="text-sm text-muted-foreground">
+          Scheduled and in-progress testing cycles across all organisations.
+        </p>
+      </div>
+
+      <TestCyclesToolbar
+        status={status === "all" ? "" : status}
+        orgFilter={orgFilter}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        organisations={organisations}
+      />
+
+      <TestCyclesTable rows={rows} />
+
+      <ListPagination page={page} pageSize={pageSize} total={total} searchParams={params} />
+    </div>
   )
 }
