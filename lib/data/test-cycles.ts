@@ -107,14 +107,18 @@ export async function getTestCycleRoster(cycleId: string): Promise<CycleRosterEn
     .from("cycle_employees")
     .select("employee_id, status, employees(full_name, employee_code)")
     .eq("cycle_id", cycleId)
-    .order("full_name", { referencedTable: "employees", ascending: true })
 
-  return (data ?? []).map((row) => ({
-    employee_id: row.employee_id,
-    full_name: row.employees?.full_name ?? "Unknown employee",
-    employee_code: row.employees?.employee_code ?? null,
-    status: row.status,
-  }))
+  // PostgREST's foreign-table `order` doesn't reorder parent rows for a
+  // to-one embed, so this has to be sorted client-side (see the same note
+  // in lib/data/employees.ts).
+  return (data ?? [])
+    .map((row) => ({
+      employee_id: row.employee_id,
+      full_name: row.employees?.full_name ?? "Unknown employee",
+      employee_code: row.employees?.employee_code ?? null,
+      status: row.status,
+    }))
+    .sort((a, b) => a.full_name.localeCompare(b.full_name))
 }
 
 export async function getTestCycleTestTypes(cycleId: string) {

@@ -31,7 +31,7 @@ function toLabel(segment: string) {
 
 export function AdminBreadcrumbs() {
   const pathname = usePathname()
-  const overrideLabel = useBreadcrumbLabelContext()?.label
+  const overrideLabels = useBreadcrumbLabelContext()?.labels ?? {}
   const segments = pathname.split("/").filter(Boolean).slice(1) // drop leading "admin"
 
   if (segments.length === 0) return null
@@ -47,16 +47,17 @@ export function AdminBreadcrumbs() {
         {segments.map((segment, index) => {
           const href = "/admin/" + segments.slice(0, index + 1).join("/")
           const isLast = index === segments.length - 1
+          const label = overrideLabels[segment] ?? toLabel(segment)
 
           return (
             <Fragment key={href}>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage>{overrideLabel ?? toLabel(segment)}</BreadcrumbPage>
+                  <BreadcrumbPage>{label}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                    <Link href={href}>{toLabel(segment)}</Link>
+                    <Link href={href}>{label}</Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

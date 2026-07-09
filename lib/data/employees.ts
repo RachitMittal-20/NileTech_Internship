@@ -54,11 +54,39 @@ export async function getEmployeesList(params: EmployeeListParams): Promise<Empl
     )
   }
 
+  // PostgREST's foreign-table `order` only reorders rows *within* an
+  // embedded to-many resource — it doesn't affect the parent row order for
+  // a to-one embed like `organisations` here. So sorting by the joined org
+  // name has to happen client-side: fetch every filtered row (unpaginated),
+  // sort in memory, then paginate in memory. Other columns sort natively at
+  // the DB level and keep the (cheaper) DB-side range pagination.
   if (sort === "org_name") {
-    query = query.order("name", { referencedTable: "organisations", ascending: dir === "asc" })
-  } else {
-    query = query.order(sort, { ascending: dir === "asc" })
+    const { data, error } = await query
+
+    if (error || !data) {
+      return { rows: [], total: 0, page, pageSize }
+    }
+
+    const rows: EmployeeListRow[] = data
+      .map((row) => ({
+        id: row.id,
+        full_name: row.full_name,
+        email: row.email,
+        phone: row.phone,
+        employee_code: row.employee_code,
+        org_id: row.org_id,
+        org_name: row.organisations?.name ?? "Unknown organisation",
+      }))
+      .sort((a, b) => {
+        const cmp = a.org_name.localeCompare(b.org_name)
+        return dir === "desc" ? -cmp : cmp
+      })
+
+    const start = (page - 1) * pageSize
+    return { rows: rows.slice(start, start + pageSize), total: rows.length, page, pageSize }
   }
+
+  query = query.order(sort, { ascending: dir === "asc" })
 
   const start = (page - 1) * pageSize
   query = query.range(start, start + pageSize - 1)

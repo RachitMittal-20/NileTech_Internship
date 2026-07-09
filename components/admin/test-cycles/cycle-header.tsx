@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
-import { CalendarClock, MapPin, Pencil } from "lucide-react"
+import { CalendarClock, ClipboardList, MapPin, Pencil } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { SetBreadcrumbLabel } from "@/components/admin/breadcrumb-label-context"
@@ -29,7 +29,10 @@ export function CycleHeader({
 
   return (
     <div className="flex flex-col gap-6 border-b border-border pb-6">
-      <SetBreadcrumbLabel label={`${orgName} · ${format(new Date(scheduledDate), "MMM d, yyyy")}`} />
+      <SetBreadcrumbLabel
+        segment={cycleId}
+        label={`${orgName} · ${format(new Date(scheduledDate), "MMM d, yyyy")}`}
+      />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
@@ -57,7 +60,14 @@ export function CycleHeader({
               </Link>
             </Button>
           ) : null}
-          {upcoming ? (
+          {status === "testing" ? (
+            <Button className="cursor-pointer" asChild>
+              <Link href={`/admin/test-cycles/${cycleId}/roster`}>
+                <ClipboardList />
+                Testing Roster
+              </Link>
+            </Button>
+          ) : upcoming ? (
             <Button className="cursor-pointer" onClick={() => setConfirmOpen(true)}>
               {STATUS_ACTION_LABEL[status]}
             </Button>
@@ -67,7 +77,7 @@ export function CycleHeader({
 
       <StatusPipeline status={status} />
 
-      {upcoming ? (
+      {upcoming && status !== "testing" ? (
         <AdvanceStatusDialog
           open={confirmOpen}
           onOpenChange={setConfirmOpen}

@@ -23,7 +23,7 @@ export function EmployeeHeader({
 
   return (
     <div className="flex flex-col gap-4 border-b border-border pb-6">
-      <SetBreadcrumbLabel label={employee.full_name} />
+      <SetBreadcrumbLabel segment={employee.id} label={employee.full_name} />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">

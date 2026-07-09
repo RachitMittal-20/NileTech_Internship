@@ -17,7 +17,7 @@ export function OrganisationHeader({ organisation }: { organisation: Tables<"org
 
   return (
     <div className="flex flex-col gap-4 border-b border-border pb-6">
-      <SetBreadcrumbLabel label={organisation.name} />
+      <SetBreadcrumbLabel segment={organisation.id} label={organisation.name} />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
