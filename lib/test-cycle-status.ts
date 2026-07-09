@@ -30,8 +30,8 @@ export const STATUS_ACTION_LABEL: Record<TestCycleStatus, string> = {
   scheduled: "Start Testing",
   testing: "Send to Lab",
   at_lab: "Begin Results Entry",
-  results_entry: "Send to Review",
-  review: "Broadcast Results",
+  results_entry: "Mark Review Complete",
+  review: "Ready to Broadcast",
   broadcast: "Mark Complete",
   complete: "",
 }

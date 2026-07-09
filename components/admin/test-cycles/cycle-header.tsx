@@ -3,13 +3,25 @@
 import { useState } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
-import { CalendarClock, ClipboardList, MapPin, Pencil } from "lucide-react"
+import { CalendarClock, ClipboardCheck, ClipboardList, FlaskConical, MapPin, Pencil } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { SetBreadcrumbLabel } from "@/components/admin/breadcrumb-label-context"
 import { StatusPipeline } from "@/components/admin/test-cycles/status-pipeline"
 import { AdvanceStatusDialog } from "@/components/admin/test-cycles/advance-status-dialog"
 import { STATUS_ACTION_LABEL, nextStatus, type TestCycleStatus } from "@/lib/test-cycle-status"
+
+// Some stages need a dedicated workspace before the cycle can actually
+// advance (recording samples, entering results, reviewing) — for those the
+// header links out instead of opening the generic transition confirm dialog.
+// The transition itself happens on that page once its work is done.
+const STAGE_WORKSPACE: Partial<
+  Record<TestCycleStatus, { path: string; label: string; icon: typeof ClipboardList }>
+> = {
+  testing: { path: "roster", label: "Testing Roster", icon: ClipboardList },
+  results_entry: { path: "results", label: "Enter Results", icon: FlaskConical },
+  review: { path: "review", label: "Review Results", icon: ClipboardCheck },
+}
 
 export function CycleHeader({
   cycleId,
@@ -26,6 +38,7 @@ export function CycleHeader({
 }) {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const upcoming = nextStatus(status)
+  const workspace = STAGE_WORKSPACE[status]
 
   return (
     <div className="flex flex-col gap-6 border-b border-border pb-6">
@@ -60,11 +73,11 @@ export function CycleHeader({
               </Link>
             </Button>
           ) : null}
-          {status === "testing" ? (
+          {workspace ? (
             <Button className="cursor-pointer" asChild>
-              <Link href={`/admin/test-cycles/${cycleId}/roster`}>
-                <ClipboardList />
-                Testing Roster
+              <Link href={`/admin/test-cycles/${cycleId}/${workspace.path}`}>
+                <workspace.icon />
+                {workspace.label}
               </Link>
             </Button>
           ) : upcoming ? (
@@ -77,7 +90,7 @@ export function CycleHeader({
 
       <StatusPipeline status={status} />
 
-      {upcoming && status !== "testing" ? (
+      {upcoming && !workspace ? (
         <AdvanceStatusDialog
           open={confirmOpen}
           onOpenChange={setConfirmOpen}
