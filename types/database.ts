@@ -59,6 +59,7 @@ export type Database = {
         Row: {
           created_at: string
           cycle_id: string
+          employee_id: string | null
           error: string | null
           id: string
           recipient_type: Database["public"]["Enums"]["broadcast_recipient_type"]
@@ -70,6 +71,7 @@ export type Database = {
         Insert: {
           created_at?: string
           cycle_id: string
+          employee_id?: string | null
           error?: string | null
           id?: string
           recipient_type: Database["public"]["Enums"]["broadcast_recipient_type"]
@@ -81,6 +83,7 @@ export type Database = {
         Update: {
           created_at?: string
           cycle_id?: string
+          employee_id?: string | null
           error?: string | null
           id?: string
           recipient_type?: Database["public"]["Enums"]["broadcast_recipient_type"]
@@ -95,6 +98,13 @@ export type Database = {
             columns: ["cycle_id"]
             isOneToOne: false
             referencedRelation: "test_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broadcasts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
             referencedColumns: ["id"]
           },
         ]

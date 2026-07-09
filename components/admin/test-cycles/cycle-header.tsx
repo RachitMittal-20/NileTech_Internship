@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
-import { CalendarClock, ClipboardCheck, ClipboardList, FlaskConical, MapPin, Pencil } from "lucide-react"
+import { CalendarClock, ClipboardCheck, ClipboardList, FlaskConical, MapPin, Pencil, Send } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { SetBreadcrumbLabel } from "@/components/admin/breadcrumb-label-context"
@@ -21,6 +21,7 @@ const STAGE_WORKSPACE: Partial<
   testing: { path: "roster", label: "Testing Roster", icon: ClipboardList },
   results_entry: { path: "results", label: "Enter Results", icon: FlaskConical },
   review: { path: "review", label: "Review Results", icon: ClipboardCheck },
+  broadcast: { path: "broadcast", label: "Delivery Log", icon: Send },
 }
 
 export function CycleHeader({
