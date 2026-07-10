@@ -6,6 +6,7 @@ import { getBroadcastCycleInfo } from "@/lib/data/broadcast"
 import { buildReportRows } from "@/lib/pdf/report-data"
 import { renderReportToBuffer } from "@/lib/pdf/render"
 import { AggregateReport } from "@/lib/pdf/aggregate-report"
+import { getReportCompany } from "@/lib/pdf/get-report-company"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const profile = await getProfile()
@@ -25,6 +26,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 
   const rows = buildReportRows(resultsData)
+  const company = await getReportCompany()
 
   const buffer = await renderReportToBuffer(
     AggregateReport({
@@ -34,6 +36,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       testTypeNames: cycleInfo.testTypeNames,
       rows,
       generatedAt: new Date().toISOString(),
+      company,
     })
   )
 

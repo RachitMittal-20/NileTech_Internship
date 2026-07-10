@@ -11,9 +11,13 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>
+  searchParams: Promise<{ next?: string; error?: string }>
 }) {
-  const { next } = await searchParams
+  const { next, error } = await searchParams
+  const initialError =
+    error === "deactivated"
+      ? "This account has been deactivated. Contact your administrator."
+      : undefined
 
   return (
     <AuthCard
@@ -28,7 +32,7 @@ export default async function LoginPage({
         </span>
       }
     >
-      <LoginForm next={next} />
+      <LoginForm next={next} initialError={initialError} />
     </AuthCard>
   )
 }

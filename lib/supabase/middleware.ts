@@ -63,9 +63,20 @@ export async function updateSession(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, is_active")
       .eq("id", user.id)
       .single()
+
+    // Deactivated staff shouldn't be able to keep using an existing session —
+    // checked here (not just at login) so it takes effect immediately.
+    if (profile && !profile.is_active) {
+      await supabase.auth.signOut()
+      const url = request.nextUrl.clone()
+      url.pathname = "/login"
+      url.search = ""
+      url.searchParams.set("error", "deactivated")
+      return NextResponse.redirect(url)
+    }
 
     const allowed =
       (isAdminRoute && profile?.role === "admin") ||

@@ -6,6 +6,7 @@ import { getBroadcastCycleInfo } from "@/lib/data/broadcast"
 import { buildReportRows, filterRowsForEmployee } from "@/lib/pdf/report-data"
 import { renderReportToBuffer } from "@/lib/pdf/render"
 import { IndividualReport } from "@/lib/pdf/individual-report"
+import { getReportCompany } from "@/lib/pdf/get-report-company"
 
 export async function GET(
   _request: Request,
@@ -33,6 +34,7 @@ export async function GET(
   }
 
   const rows = filterRowsForEmployee(buildReportRows(resultsData), employeeId)
+  const company = await getReportCompany()
 
   const buffer = await renderReportToBuffer(
     IndividualReport({
@@ -42,6 +44,7 @@ export async function GET(
       cycleDate: cycleInfo.scheduledDate,
       rows,
       generatedAt: new Date().toISOString(),
+      company,
     })
   )
 

@@ -109,6 +109,36 @@ export type Database = {
           },
         ]
       }
+      company_profile: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cycle_employees: {
         Row: {
           created_at: string
@@ -221,6 +251,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_templates: {
+        Row: {
+          body_html: string
+          id: string
+          subject: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          body_html: string
+          id?: string
+          subject: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          body_html?: string
+          id?: string
+          subject?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       employees: {
         Row: {
@@ -351,6 +405,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_active: boolean
           org_id: string | null
           role: Database["public"]["Enums"]["profile_role"]
           updated_at: string
@@ -359,6 +414,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_active?: boolean
           org_id?: string | null
           role: Database["public"]["Enums"]["profile_role"]
           updated_at?: string
@@ -367,6 +423,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_active?: boolean
           org_id?: string | null
           role?: Database["public"]["Enums"]["profile_role"]
           updated_at?: string
@@ -576,6 +633,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_test_type_version: {
+        Args: {
+          new_classification_rules: Json
+          new_name: string
+          new_result_fields: Json
+          old_id: string
+        }
+        Returns: string
+      }
       current_org_id: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
     }

@@ -2,7 +2,7 @@ import { Document, Page, View, Text } from "@react-pdf/renderer"
 import { format } from "date-fns"
 
 import { styles, INDIVIDUAL_COLS } from "@/lib/pdf/styles"
-import { ReportHeader, ReportFooter, ClassificationBadgePdf } from "@/lib/pdf/report-chrome"
+import { ReportHeader, ReportFooter, ClassificationBadgePdf, type ReportCompanyInfo } from "@/lib/pdf/report-chrome"
 import type { ReportRow } from "@/lib/pdf/report-data"
 
 export interface IndividualReportProps {
@@ -12,6 +12,7 @@ export interface IndividualReportProps {
   cycleDate: string
   rows: ReportRow[]
   generatedAt: string
+  company?: ReportCompanyInfo
 }
 
 export function IndividualReport({
@@ -21,13 +22,14 @@ export function IndividualReport({
   cycleDate,
   rows,
   generatedAt,
+  company,
 }: IndividualReportProps) {
   const flagged = rows.filter((r) => r.classification?.flagged)
 
   return (
     <Document title={`${employeeName} — Test Results`}>
       <Page size="LETTER" style={styles.page}>
-        <ReportHeader docType="INDIVIDUAL RESULTS REPORT" />
+        <ReportHeader docType="INDIVIDUAL RESULTS REPORT" company={company} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{employeeName}</Text>
@@ -98,7 +100,7 @@ export function IndividualReport({
           </View>
         </View>
 
-        <ReportFooter />
+        <ReportFooter company={company} />
       </Page>
     </Document>
   )

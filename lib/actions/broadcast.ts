@@ -10,9 +10,11 @@ import { buildReportRows, filterRowsForEmployee } from "@/lib/pdf/report-data"
 import { renderReportToBuffer } from "@/lib/pdf/render"
 import { AggregateReport } from "@/lib/pdf/aggregate-report"
 import { IndividualReport } from "@/lib/pdf/individual-report"
-import { buildBroadcastEmailHtml } from "@/lib/email/broadcast-email"
+import { buildBroadcastEmail } from "@/lib/email/broadcast-email"
 import { sendBroadcastEmail } from "@/lib/resend"
 import { runInBatches } from "@/lib/batch"
+import { getReportCompany } from "@/lib/pdf/get-report-company"
+import type { ReportCompanyInfo } from "@/lib/pdf/report-chrome"
 import type { Tables } from "@/types/database"
 
 async function requireAdmin() {
@@ -75,6 +77,7 @@ export async function sendBroadcast(
   }
 
   const allRows = buildReportRows(resultsData)
+  const company = await getReportCompany()
   const employeeById = new Map(cycleInfo.employees.map((e) => [e.employee_id, e]))
 
   type Target =
@@ -90,9 +93,9 @@ export async function sendBroadcast(
 
   const outcomes = await runInBatches(targets, BATCH_SIZE, async (target) => {
     if (target.kind === "org") {
-      return sendOrgBroadcast(cycleId, cycleInfo, allRows)
+      return sendOrgBroadcast(cycleId, cycleInfo, allRows, company)
     }
-    return sendEmployeeBroadcast(cycleId, cycleInfo, allRows, target.employee)
+    return sendEmployeeBroadcast(cycleId, cycleInfo, allRows, target.employee, company)
   })
 
   const sentCount = outcomes.filter((o) => o.success).length
@@ -151,7 +154,8 @@ async function insertBroadcastRow(
 async function sendOrgBroadcast(
   cycleId: string,
   cycleInfo: NonNullable<Awaited<ReturnType<typeof getBroadcastCycleInfo>>>,
-  rows: ReturnType<typeof buildReportRows>
+  rows: ReturnType<typeof buildReportRows>,
+  company: ReportCompanyInfo
 ): Promise<{ success: boolean }> {
   if (!cycleInfo.orgContactEmail) {
     await insertBroadcastRow(
@@ -173,10 +177,11 @@ async function sendOrgBroadcast(
       testTypeNames: cycleInfo.testTypeNames,
       rows,
       generatedAt: new Date().toISOString(),
+      company,
     })
   )
 
-  const html = buildBroadcastEmailHtml({
+  const { subject, html } = await buildBroadcastEmail({
     orgName: cycleInfo.orgName,
     cycleDate: cycleInfo.scheduledDate,
     recipientName: cycleInfo.orgContactName ?? cycleInfo.orgName,
@@ -185,7 +190,7 @@ async function sendOrgBroadcast(
 
   const result = await sendBroadcastEmail({
     to: cycleInfo.orgContactEmail,
-    subject: `${cycleInfo.orgName} — Test Cycle Results (${new Date(cycleInfo.scheduledDate).toLocaleDateString()})`,
+    subject,
     html,
     attachment: { filename: "aggregate-results.pdf", content: buffer },
   })
@@ -206,7 +211,8 @@ async function sendEmployeeBroadcast(
   cycleId: string,
   cycleInfo: NonNullable<Awaited<ReturnType<typeof getBroadcastCycleInfo>>>,
   allRows: ReturnType<typeof buildReportRows>,
-  employee: BroadcastEmployee
+  employee: BroadcastEmployee,
+  company: ReportCompanyInfo
 ): Promise<{ success: boolean }> {
   if (!employee.email) {
     await insertBroadcastRow(
@@ -230,10 +236,11 @@ async function sendEmployeeBroadcast(
       cycleDate: cycleInfo.scheduledDate,
       rows,
       generatedAt: new Date().toISOString(),
+      company,
     })
   )
 
-  const html = buildBroadcastEmailHtml({
+  const { subject, html } = await buildBroadcastEmail({
     orgName: cycleInfo.orgName,
     cycleDate: cycleInfo.scheduledDate,
     recipientName: employee.full_name,
@@ -242,7 +249,7 @@ async function sendEmployeeBroadcast(
 
   const result = await sendBroadcastEmail({
     to: employee.email,
-    subject: `Your Test Results — ${new Date(cycleInfo.scheduledDate).toLocaleDateString()}`,
+    subject,
     html,
     attachment: { filename: "your-results.pdf", content: buffer },
   })
@@ -288,6 +295,7 @@ export async function resendBroadcast(broadcastId: string): Promise<ResendBroadc
   }
 
   const allRows = buildReportRows(resultsData)
+  const company = await getReportCompany()
 
   let outcome: { success: boolean; error?: string }
   let sentTo: string | null = broadcast.sent_to
@@ -305,9 +313,10 @@ export async function resendBroadcast(broadcastId: string): Promise<ResendBroadc
           testTypeNames: cycleInfo.testTypeNames,
           rows: allRows,
           generatedAt: new Date().toISOString(),
+          company,
         })
       )
-      const html = buildBroadcastEmailHtml({
+      const { subject, html } = await buildBroadcastEmail({
         orgName: cycleInfo.orgName,
         cycleDate: cycleInfo.scheduledDate,
         recipientName: cycleInfo.orgContactName ?? cycleInfo.orgName,
@@ -315,7 +324,7 @@ export async function resendBroadcast(broadcastId: string): Promise<ResendBroadc
       })
       outcome = await sendBroadcastEmail({
         to: sentTo,
-        subject: `${cycleInfo.orgName} — Test Cycle Results (${new Date(cycleInfo.scheduledDate).toLocaleDateString()})`,
+        subject,
         html,
         attachment: { filename: "aggregate-results.pdf", content: buffer },
       })
@@ -335,9 +344,10 @@ export async function resendBroadcast(broadcastId: string): Promise<ResendBroadc
           cycleDate: cycleInfo.scheduledDate,
           rows,
           generatedAt: new Date().toISOString(),
+          company,
         })
       )
-      const html = buildBroadcastEmailHtml({
+      const { subject, html } = await buildBroadcastEmail({
         orgName: cycleInfo.orgName,
         cycleDate: cycleInfo.scheduledDate,
         recipientName: employee.full_name,
@@ -345,7 +355,7 @@ export async function resendBroadcast(broadcastId: string): Promise<ResendBroadc
       })
       outcome = await sendBroadcastEmail({
         to: sentTo,
-        subject: `Your Test Results — ${new Date(cycleInfo.scheduledDate).toLocaleDateString()}`,
+        subject,
         html,
         attachment: { filename: "your-results.pdf", content: buffer },
       })

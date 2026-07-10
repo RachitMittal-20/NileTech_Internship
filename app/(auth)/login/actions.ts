@@ -45,7 +45,7 @@ export async function login(
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, is_active")
     .eq("id", data.user.id)
     .single()
 
@@ -54,6 +54,11 @@ export async function login(
     // leaking that the credentials were actually correct.
     await supabase.auth.signOut()
     return { error: GENERIC_ERROR }
+  }
+
+  if (!profile.is_active) {
+    await supabase.auth.signOut()
+    return { error: "This account has been deactivated. Contact your administrator." }
   }
 
   const dashboard = profile.role === "admin" ? "/admin/dashboard" : "/portal/dashboard"

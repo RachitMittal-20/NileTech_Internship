@@ -1,6 +1,7 @@
-import { View, Text, Svg, Path, Rect } from "@react-pdf/renderer"
+import { View, Text, Svg, Path, Rect, Image } from "@react-pdf/renderer"
 
 import { BRAND, styles } from "@/lib/pdf/styles"
+import { SITE } from "@/lib/constants"
 
 export function ReportLogoMark() {
   return (
@@ -18,13 +19,31 @@ export function ReportLogoMark() {
   )
 }
 
-export function ReportHeader({ docType }: { docType: string }) {
+export interface ReportCompanyInfo {
+  name: string
+  logoUrl: string | null
+}
+
+export function ReportHeader({
+  docType,
+  company,
+}: {
+  docType: string
+  company?: ReportCompanyInfo
+}) {
+  const companyName = company?.name ?? SITE.name
+
   return (
     <View style={styles.header} fixed>
       <View style={styles.headerBrandRow}>
-        <ReportLogoMark />
+        {company?.logoUrl ? (
+          // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer's Image has no alt prop
+          <Image src={company.logoUrl} style={{ width: 22, height: 22, borderRadius: 4 }} />
+        ) : (
+          <ReportLogoMark />
+        )}
         <View>
-          <Text style={styles.headerWordmark}>Strong Path Diagnostics</Text>
+          <Text style={styles.headerWordmark}>{companyName}</Text>
           <Text style={styles.headerTagline}>Enterprise diagnostic testing, built for the workplace.</Text>
         </View>
       </View>
@@ -36,13 +55,13 @@ export function ReportHeader({ docType }: { docType: string }) {
   )
 }
 
-const FOOTER_NOTE =
-  "This report contains confidential health information intended solely for the named recipient. Strong Path Diagnostics · Automated report — for questions, contact your account administrator."
+export function ReportFooter({ company }: { company?: ReportCompanyInfo }) {
+  const companyName = company?.name ?? SITE.name
+  const footerNote = `This report contains confidential health information intended solely for the named recipient. ${companyName} · Automated report — for questions, contact your account administrator.`
 
-export function ReportFooter() {
   return (
     <View style={styles.footer} fixed>
-      <Text style={styles.footerText}>{FOOTER_NOTE}</Text>
+      <Text style={styles.footerText}>{footerNote}</Text>
       <Text
         style={styles.footerText}
         render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`}

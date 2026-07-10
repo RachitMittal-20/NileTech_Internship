@@ -2,7 +2,7 @@ import { Document, Page, View, Text } from "@react-pdf/renderer"
 import { format } from "date-fns"
 
 import { styles, AGGREGATE_COLS } from "@/lib/pdf/styles"
-import { ReportHeader, ReportFooter, ClassificationBadgePdf } from "@/lib/pdf/report-chrome"
+import { ReportHeader, ReportFooter, ClassificationBadgePdf, type ReportCompanyInfo } from "@/lib/pdf/report-chrome"
 import type { ReportRow } from "@/lib/pdf/report-data"
 
 export interface AggregateReportProps {
@@ -12,6 +12,7 @@ export interface AggregateReportProps {
   testTypeNames: string[]
   rows: ReportRow[]
   generatedAt: string
+  company?: ReportCompanyInfo
 }
 
 export function AggregateReport({
@@ -21,13 +22,14 @@ export function AggregateReport({
   testTypeNames,
   rows,
   generatedAt,
+  company,
 }: AggregateReportProps) {
   const flagged = rows.filter((r) => r.classification?.flagged)
 
   return (
     <Document title={`${orgName} — Test Cycle Results`}>
       <Page size="LETTER" style={styles.page}>
-        <ReportHeader docType="AGGREGATE RESULTS REPORT" />
+        <ReportHeader docType="AGGREGATE RESULTS REPORT" company={company} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{orgName}</Text>
@@ -111,7 +113,7 @@ export function AggregateReport({
           </View>
         </View>
 
-        <ReportFooter />
+        <ReportFooter company={company} />
       </Page>
     </Document>
   )

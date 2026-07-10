@@ -10,9 +10,11 @@ import { login, type LoginState } from "./actions"
 
 const initialState: LoginState = {}
 
-export function LoginForm({ next }: { next?: string }) {
+export function LoginForm({ next, initialError }: { next?: string; initialError?: string }) {
   const [state, formAction, isPending] = useActionState(login, initialState)
   const [showPassword, setShowPassword] = useState(false)
+
+  const error = state.error ?? initialError
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -52,9 +54,9 @@ export function LoginForm({ next }: { next?: string }) {
         </div>
       </div>
 
-      {state.error ? (
+      {error ? (
         <p role="alert" aria-live="polite" className="text-sm text-destructive">
-          {state.error}
+          {error}
         </p>
       ) : null}
 
