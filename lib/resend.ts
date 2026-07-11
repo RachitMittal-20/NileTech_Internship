@@ -3,10 +3,20 @@ import "server-only"
 import { Resend } from "resend"
 
 export const RESEND_NOT_CONFIGURED_MESSAGE =
-  "Resend is not configured. Set RESEND_API_KEY and RESEND_FROM_EMAIL in your environment to send broadcasts."
+  "Resend is not configured. Set RESEND_API_KEY in your environment to send broadcasts."
+
+// Resend's own shared sandbox sender — works with any Resend account with no
+// domain verification needed, so this is a safe default for RESEND_FROM_EMAIL
+// rather than requiring every environment to configure a verified sender
+// before broadcasts/reminders can send at all.
+const DEFAULT_RESEND_FROM_EMAIL = "onboarding@resend.dev"
+
+export function getFromEmail(): string {
+  return process.env.RESEND_FROM_EMAIL || DEFAULT_RESEND_FROM_EMAIL
+}
 
 export function isResendConfigured(): boolean {
-  return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL)
+  return Boolean(process.env.RESEND_API_KEY)
 }
 
 let client: Resend | null = null
@@ -43,15 +53,14 @@ export interface SendPlainEmailInput {
 // reminders) that don't carry a PDF.
 export async function sendPlainEmail(input: SendPlainEmailInput): Promise<SendEmailResult> {
   const resend = getResendClient()
-  const fromEmail = process.env.RESEND_FROM_EMAIL
 
-  if (!resend || !fromEmail) {
+  if (!resend) {
     return { success: false, error: RESEND_NOT_CONFIGURED_MESSAGE }
   }
 
   try {
     const { error } = await resend.emails.send({
-      from: fromEmail,
+      from: getFromEmail(),
       to: input.to,
       subject: input.subject,
       html: input.html,
@@ -72,15 +81,14 @@ export async function sendPlainEmail(input: SendPlainEmailInput): Promise<SendEm
 // resend button), not a server error.
 export async function sendBroadcastEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const resend = getResendClient()
-  const fromEmail = process.env.RESEND_FROM_EMAIL
 
-  if (!resend || !fromEmail) {
+  if (!resend) {
     return { success: false, error: RESEND_NOT_CONFIGURED_MESSAGE }
   }
 
   try {
     const { error } = await resend.emails.send({
-      from: fromEmail,
+      from: getFromEmail(),
       to: input.to,
       subject: input.subject,
       html: input.html,
