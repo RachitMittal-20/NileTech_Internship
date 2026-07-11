@@ -73,18 +73,18 @@ export function EmployeeResultsList({ employees }: { employees: PortalEmployeeRe
             <StaggerItem as="div" index={index} key={e.employeeId} role="listitem">
               <Link
                 href={`/portal/employees/${e.employeeId}`}
-                className="flex items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50"
+                className="flex items-center justify-between gap-3 px-4 py-4 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 sm:px-5"
               >
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium text-foreground">{e.fullName}</span>
-                  <span className="text-xs text-muted-foreground">
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <span className="truncate text-sm font-medium text-foreground">{e.fullName}</span>
+                  <span className="truncate text-xs text-muted-foreground">
                     {e.employeeCode ? `${e.employeeCode} · ` : ""}
                     {e.latestResultDate
                       ? `Last tested ${format(new Date(e.latestResultDate), "MMM d, yyyy")}`
                       : "No results yet"}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-3">
                   <ResultStatusBadge classification={e.latestClassification} />
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
                 </div>

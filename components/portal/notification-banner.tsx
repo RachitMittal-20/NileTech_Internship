@@ -29,7 +29,10 @@ export function NotificationBanner({ unreadCount }: { unreadCount: number }) {
               <p className="text-sm text-foreground">
                 You have <span className="font-medium">{unreadCount}</span> unread notification
                 {unreadCount === 1 ? "" : "s"}.{" "}
-                <Link href="/portal/notifications" className="font-medium text-accent underline underline-offset-2">
+                {/* text-accent (teal) fails WCAG AA contrast (~2.9:1) against
+                    this banner's light tinted background — text-primary (navy)
+                    passes and still reads as a link via the underline. */}
+                <Link href="/portal/notifications" className="font-medium text-primary underline underline-offset-2">
                   View all
                 </Link>
               </p>

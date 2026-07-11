@@ -55,6 +55,54 @@ their password), and creates the matching `profiles` row with
 `role = 'client_admin'` and the given `org_id`. There's no UI wired to this
 yet; it'll be called from the org management screen in the Admin System.
 
+## Seed realistic demo data
+
+`scripts/seed-demo.ts` populates the app with three organisations, ~50
+employees, test cycles at every pipeline stage, correctly auto-classified
+results, a couple of pending/approved testing requests, and one
+`client_admin` portal login per org — useful for demos, screenshots, or just
+having something realistic to click through locally.
+
+```bash
+npm run seed:demo
+```
+
+What it creates:
+
+| Organisation | Employees | Cycles |
+|---|---|---|
+| Meridian Health Group | 25 | One **Complete** cycle (Jul 14, 2026, all active test types, already broadcast) + one **Scheduled** cycle (Aug 18, 2026) |
+| Apex Logistics | 15 | One **Broadcast** cycle (Jul 5, 2026, Drug/A1C/Glucose, some flagged) + one **At Lab** cycle (Jul 19, 2026) |
+| Sunrise Education Trust | 10 | One **Results Entry** cycle (Jul 10, 2026) — only half the roster has results, on purpose, to look genuinely in-progress |
+
+Result values are hand-picked so `classify()` (the app's real classification
+logic, not a hardcoded string) lands on specific, checkable outcomes — e.g. an
+A1C of 7.2 comes back Diabetic/flagged, a Cholesterol of 185 comes back
+Desirable/clear, and so on — plus a scattering of other flagged results across
+Glucose and Drug screens so the dashboards don't look suspiciously perfect.
+
+Meridian also gets two `cycle_requests`: one `pending`, one `approved` — these
+show up in the portal's Request Testing history and in the admin Test Cycles
+page's "Requests" inbox badge.
+
+Portal logins (all three share one password):
+
+| Org | Email |
+|---|---|
+| Meridian Health Group | `demo-meridian@strongpathdiagnostics.example` |
+| Apex Logistics | `demo-apex@strongpathdiagnostics.example` |
+| Sunrise Education Trust | `demo-sunrise@strongpathdiagnostics.example` |
+
+Password: `DemoPortal!2026`
+
+**Idempotent** — every insert is preceded by an existence check (or uses a
+real DB unique constraint via `upsert`), so running it again after the first
+time just confirms everything's already there rather than duplicating rows.
+Safe to run after every fresh `db reset` or on a shared staging project.
+
+These are demo-only, low-stakes fake email addresses (`.example` TLD, never
+actually deliverable) — don't reuse this pattern for real client accounts.
+
 ## Appointment reminder emails (Vercel Cron)
 
 `app/api/cron/appointment-reminders/route.ts` sends a reminder email to every

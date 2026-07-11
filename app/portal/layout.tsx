@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation"
 
-import { PortalSidebar } from "@/components/portal/portal-sidebar"
+import { PortalSidebar, PortalMobileSidebar } from "@/components/portal/portal-sidebar"
 import { PortalHeader } from "@/components/portal/portal-header"
 import { PageTransition } from "@/components/portal/motion/page-transition"
+import { MobileNavProvider } from "@/components/portal/mobile-nav-context"
 import { getProfile } from "@/lib/supabase/get-profile"
 import { getPortalOrg } from "@/lib/data/portal"
 
@@ -27,16 +28,19 @@ export default async function PortalLayout({ children }: { children: React.React
   const org = await getPortalOrg(profile.org_id)
 
   return (
-    <div className="flex min-h-dvh bg-background">
-      <PortalSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <PortalHeader profile={profile} orgName={org?.name ?? "Your organization"} />
-        <main className="flex flex-1 flex-col gap-6 px-6 py-8 md:px-10">
-          <div className="mx-auto w-full max-w-6xl">
-            <PageTransition>{children}</PageTransition>
-          </div>
-        </main>
+    <MobileNavProvider>
+      <div className="flex min-h-dvh bg-background">
+        <PortalSidebar />
+        <PortalMobileSidebar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <PortalHeader profile={profile} orgName={org?.name ?? "Your organization"} />
+          <main className="flex flex-1 flex-col gap-6 px-4 py-8 sm:px-6 md:px-10">
+            <div className="mx-auto w-full max-w-6xl">
+              <PageTransition>{children}</PageTransition>
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </MobileNavProvider>
   )
 }

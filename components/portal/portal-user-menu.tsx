@@ -29,9 +29,16 @@ export function PortalUserMenu({ profile }: { profile: Tables<"profiles"> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-9 cursor-pointer gap-2 px-2" aria-label="Open user menu">
+        <Button
+          variant="ghost"
+          className="h-9 cursor-pointer gap-2 px-2"
+          aria-label={profile.full_name ?? "Account"}
+        >
           <Avatar className="size-7">
-            <AvatarFallback className="bg-accent text-xs text-accent-foreground">
+            {/* bg-accent/text-accent-foreground (teal/white) fails WCAG AA
+                contrast (~3.7:1) at this text size — primary/primary-foreground
+                (navy/white) matches the admin UserMenu's avatar and passes. */}
+            <AvatarFallback className="bg-primary text-xs text-primary-foreground">
               {initials(profile.full_name)}
             </AvatarFallback>
           </Avatar>

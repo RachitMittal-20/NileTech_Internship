@@ -61,7 +61,7 @@ export default async function PortalDashboardPage() {
       </div>
 
       {data.latestResults ? (
-        <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.12)]">
+        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.12)] sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium text-foreground">
               Results from {format(new Date(data.latestResults.scheduledDate), "MMMM d, yyyy")} are ready
@@ -71,7 +71,7 @@ export default async function PortalDashboardPage() {
               {data.latestResults.pendingCount > 0 ? ` · ${data.latestResults.pendingCount} pending` : ""}
             </p>
           </div>
-          <Button asChild className="cursor-pointer">
+          <Button asChild className="w-fit cursor-pointer">
             <Link href="/portal/results">
               View results
               <ArrowRight className="size-4" />
