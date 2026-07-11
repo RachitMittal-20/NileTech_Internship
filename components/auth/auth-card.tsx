@@ -15,7 +15,7 @@ export function AuthCard({
   footer?: ReactNode
 }) {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-12">
+    <div className="animate-gradient-drift flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-12">
       <div className="flex w-full max-w-sm flex-col items-center gap-6">
         <div className="flex items-center gap-2.5">
           <LogoMark />

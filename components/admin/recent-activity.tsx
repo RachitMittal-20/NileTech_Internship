@@ -17,7 +17,7 @@ export async function RecentActivity() {
     .limit(10)
 
   return (
-    <Card>
+    <Card className="glass-card">
       <CardHeader>
         <CardTitle>Recent activity</CardTitle>
       </CardHeader>

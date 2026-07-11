@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowDown, ArrowUp, ArrowUpDown, Building2 } from "lucide-react"
+import { motion } from "framer-motion"
 
 import {
   Table,
@@ -20,7 +21,11 @@ import {
   useOrganisationFormSheet,
 } from "@/components/admin/organisations/organisation-form-sheet"
 import { getOrganisationById } from "@/lib/actions/organisations"
+import { fadeUp, stagger } from "@/lib/motion"
 import type { OrganisationListRow, OrganisationListSort } from "@/lib/data/organisations"
+
+const MotionTableBody = motion.create(TableBody)
+const MotionTableRow = motion.create(TableRow)
 
 const COLUMNS: { key: OrganisationListSort; label: string; className?: string }[] = [
   { key: "name", label: "Name" },
@@ -95,9 +100,13 @@ export function OrganisationsTable({
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <MotionTableBody initial="initial" animate="animate" variants={stagger}>
             {rows.map((row) => (
-              <TableRow key={row.id}>
+              <MotionTableRow
+                key={row.id}
+                variants={{ initial: fadeUp.initial, animate: fadeUp.animate }}
+                transition={fadeUp.transition}
+              >
                 <TableCell className="font-medium text-foreground">
                   <Link href={`/admin/organisations/${row.id}`} className="hover:underline">
                     {row.name}
@@ -116,9 +125,9 @@ export function OrganisationsTable({
                 <TableCell>
                   <OrganisationRowActions organisation={row} onEdit={() => handleEdit(row)} />
                 </TableCell>
-              </TableRow>
+              </MotionTableRow>
             ))}
-          </TableBody>
+          </MotionTableBody>
         </Table>
       </div>
 

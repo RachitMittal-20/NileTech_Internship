@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { motion, useReducedMotion } from "framer-motion"
 
 import { LogoMark } from "@/components/brand/logo-mark"
 import {
@@ -20,6 +21,7 @@ import { adminNavItems } from "@/components/admin/nav-config"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const reduced = useReducedMotion()
 
   return (
     <Sidebar collapsible="icon">
@@ -53,10 +55,22 @@ export function AppSidebar() {
 
                 return (
                   <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                      className="relative data-active:bg-transparent data-active:hover:bg-transparent"
+                    >
                       <Link href={item.url}>
-                        <item.icon strokeWidth={1.75} />
-                        <span>{item.title}</span>
+                        {isActive ? (
+                          <motion.span
+                            layoutId="admin-nav-pill"
+                            className="absolute inset-0 rounded-md bg-sidebar-accent"
+                            transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 32 }}
+                          />
+                        ) : null}
+                        <item.icon strokeWidth={1.75} className="relative z-10" />
+                        <span className="relative z-10">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

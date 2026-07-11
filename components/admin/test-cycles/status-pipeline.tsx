@@ -1,10 +1,13 @@
-import { Check } from "lucide-react"
+"use client"
+
+import { motion, useReducedMotion } from "framer-motion"
 
 import { STATUS_LABEL, STATUS_PIPELINE, type TestCycleStatus } from "@/lib/test-cycle-status"
 import { cn } from "@/lib/utils"
 
 export function StatusPipeline({ status }: { status: TestCycleStatus }) {
   const currentIndex = STATUS_PIPELINE.indexOf(status)
+  const reduced = useReducedMotion()
 
   return (
     <ol className="flex w-full items-center overflow-x-auto pb-1">
@@ -24,7 +27,22 @@ export function StatusPipeline({ status }: { status: TestCycleStatus }) {
                   !isComplete && !isCurrent && "border-border bg-muted text-muted-foreground"
                 )}
               >
-                {isComplete ? <Check className="size-3.5" /> : index + 1}
+                {isComplete ? (
+                  <svg viewBox="0 0 16 16" className="size-3.5" fill="none">
+                    <motion.path
+                      d="M3 8.5L6.5 12L13 4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      initial={{ pathLength: reduced ? 1 : 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: reduced ? 0 : 0.3, ease: "easeOut" }}
+                    />
+                  </svg>
+                ) : (
+                  index + 1
+                )}
               </div>
               <span
                 className={cn(
@@ -36,12 +54,14 @@ export function StatusPipeline({ status }: { status: TestCycleStatus }) {
               </span>
             </div>
             {!isLast ? (
-              <div
-                className={cn(
-                  "mx-2 h-px flex-1",
-                  isComplete ? "bg-primary" : "bg-border"
-                )}
-              />
+              <div className="mx-2 h-px flex-1 bg-border">
+                <motion.div
+                  className="h-px bg-primary"
+                  initial={{ width: reduced ? (isComplete ? "100%" : "0%") : "0%" }}
+                  animate={{ width: isComplete ? "100%" : "0%" }}
+                  transition={{ duration: reduced ? 0 : 0.3, ease: "easeOut" }}
+                />
+              </div>
             ) : null}
           </li>
         )

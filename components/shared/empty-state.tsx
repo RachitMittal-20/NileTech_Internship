@@ -25,7 +25,7 @@ export function EmptyState({
         className
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground [&_svg]:size-6">
+      <div className="animate-float flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground [&_svg]:size-6">
         {icon}
       </div>
       <div className="flex flex-col gap-1">

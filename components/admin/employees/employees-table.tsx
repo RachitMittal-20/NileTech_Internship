@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { ArrowDown, ArrowUp, ArrowUpDown, Users, Pencil } from "lucide-react"
+import { motion } from "framer-motion"
 
 import {
   Table,
@@ -15,8 +16,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/shared/empty-state"
 import { getEmployeeById } from "@/lib/actions/employees"
+import { fadeUp, stagger } from "@/lib/motion"
 import type { EmployeeListRow, EmployeeListSort } from "@/lib/data/employees"
 import type { Tables } from "@/types/database"
+
+const MotionTableBody = motion.create(TableBody)
+const MotionTableRow = motion.create(TableRow)
 
 export function EmployeesTable({
   rows,
@@ -92,9 +97,13 @@ export function EmployeesTable({
             <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <MotionTableBody initial="initial" animate="animate" variants={stagger}>
           {rows.map((row) => (
-            <TableRow key={row.id}>
+            <MotionTableRow
+              key={row.id}
+              variants={{ initial: fadeUp.initial, animate: fadeUp.animate }}
+              transition={fadeUp.transition}
+            >
               <TableCell className="font-medium text-foreground">
                 <Link href={`/admin/employees/${row.id}`} className="hover:underline">
                   {row.full_name}
@@ -121,9 +130,9 @@ export function EmployeesTable({
                   <span className="sr-only">Edit</span>
                 </Button>
               </TableCell>
-            </TableRow>
+            </MotionTableRow>
           ))}
-        </TableBody>
+        </MotionTableBody>
       </Table>
     </div>
   )

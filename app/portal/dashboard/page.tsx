@@ -61,7 +61,7 @@ export default async function PortalDashboardPage() {
       </div>
 
       {data.latestResults ? (
-        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.12)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="glass-card flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium text-foreground">
               Results from {format(new Date(data.latestResults.scheduledDate), "MMMM d, yyyy")} are ready

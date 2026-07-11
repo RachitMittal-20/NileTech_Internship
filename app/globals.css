@@ -219,3 +219,35 @@
     animation: none;
   }
 }
+
+/* Slow-shifting navy/teal radial gradient backdrop for the login page. */
+@keyframes gradient-drift {
+  0%,
+  100% {
+    background-position: 0% 50%, 100% 50%;
+  }
+  50% {
+    background-position: 100% 50%, 0% 50%;
+  }
+}
+.animate-gradient-drift {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(13, 148, 136, 0.12), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(11, 37, 69, 0.1), transparent 55%);
+  background-size: 200% 200%;
+  animation: gradient-drift 10s ease infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-drift {
+    animation: none;
+  }
+}
+
+/* Light glassmorphism for elevated cards/panels (dashboard stats, sheets,
+   portal cards) — frosted white over the app's light background. */
+.glass-card {
+  background-color: rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}

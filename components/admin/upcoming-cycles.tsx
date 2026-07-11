@@ -30,7 +30,7 @@ export async function UpcomingCycles() {
     .limit(5)
 
   return (
-    <Card>
+    <Card className="glass-card">
       <CardHeader>
         <CardTitle>Upcoming test cycles</CardTitle>
       </CardHeader>

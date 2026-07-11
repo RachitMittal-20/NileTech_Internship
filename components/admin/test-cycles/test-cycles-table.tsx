@@ -1,6 +1,9 @@
+"use client"
+
 import Link from "next/link"
 import { format } from "date-fns"
 import { FlaskConical } from "lucide-react"
+import { motion } from "framer-motion"
 
 import {
   Table,
@@ -13,7 +16,11 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { EmptyState } from "@/components/shared/empty-state"
 import { StatusBadge } from "@/components/admin/test-cycles/status-badge"
+import { fadeUp, stagger } from "@/lib/motion"
 import type { TestCycleListRow } from "@/lib/data/test-cycles"
+
+const MotionTableBody = motion.create(TableBody)
+const MotionTableRow = motion.create(TableRow)
 
 export function TestCyclesTable({ rows }: { rows: TestCycleListRow[] }) {
   if (rows.length === 0) {
@@ -38,9 +45,13 @@ export function TestCyclesTable({ rows }: { rows: TestCycleListRow[] }) {
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <MotionTableBody initial="initial" animate="animate" variants={stagger}>
           {rows.map((cycle) => (
-            <TableRow key={cycle.id}>
+            <MotionTableRow
+              key={cycle.id}
+              variants={{ initial: fadeUp.initial, animate: fadeUp.animate }}
+              transition={fadeUp.transition}
+            >
               <TableCell className="font-medium text-foreground">
                 <Link href={`/admin/test-cycles/${cycle.id}`} className="hover:underline">
                   {cycle.org_name}
@@ -67,9 +78,9 @@ export function TestCyclesTable({ rows }: { rows: TestCycleListRow[] }) {
               <TableCell>
                 <StatusBadge status={cycle.status} />
               </TableCell>
-            </TableRow>
+            </MotionTableRow>
           ))}
-        </TableBody>
+        </MotionTableBody>
       </Table>
     </div>
   )
