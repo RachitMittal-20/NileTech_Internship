@@ -6,7 +6,11 @@ import { logAudit } from "@/lib/audit"
 import { createClient } from "@/lib/supabase/server"
 import { getProfile } from "@/lib/supabase/get-profile"
 import { isValidTransition, nextStatus, STATUS_LABEL, type TestCycleStatus } from "@/lib/test-cycle-status"
-import { testCycleFormSchema, type TestCycleFormValues } from "@/lib/validations/test-cycle"
+import {
+  testCycleFormSchema,
+  advanceTestCycleStatusSchema,
+  type TestCycleFormValues,
+} from "@/lib/validations/test-cycle"
 import { getEmployeesForOrg } from "@/lib/data/test-cycles"
 
 export interface TestCycleActionResult {
@@ -183,6 +187,11 @@ export async function advanceTestCycleStatus(
 ): Promise<TestCycleActionResult> {
   const { profile, error: authError } = await requireAdmin()
   if (!profile) return { error: authError }
+
+  const parsed = advanceTestCycleStatusSchema.safeParse({ id, to })
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." }
+  }
 
   const supabase = await createClient()
 

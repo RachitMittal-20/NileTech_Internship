@@ -70,13 +70,22 @@ export async function saveSampleResult(
 
   const fields = parseResultFields(testType?.result_fields ?? [])
   const rules = parseClassificationRules(testType?.classification_rules ?? [])
-  const result = classify(values, rules, fields)
+
+  // _override is reserved for overrideResultClassification's dedicated
+  // reason-required, separately-audited flow. Regular result entry must
+  // never be able to smuggle one in here — that would classify the sample
+  // however the caller likes with no reason on record and a `record_result`
+  // audit entry instead of `override_result_classification`.
+  const safeValues: ResultValues = { ...values }
+  delete safeValues._override
+
+  const result = classify(safeValues, rules, fields)
   const classification: Tables<"results">["classification"] = result ? (result.flagged ? "flagged" : "clear") : null
 
   const { error } = await supabase.from("results").upsert(
     {
       sample_id: sampleId,
-      values: values as Json,
+      values: safeValues as Json,
       classification,
       entered_by: profile.id,
       entered_at: new Date().toISOString(),

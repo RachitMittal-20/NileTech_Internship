@@ -3,6 +3,7 @@
 import { logAudit } from "@/lib/audit"
 import { createClient } from "@/lib/supabase/server"
 import { getProfile } from "@/lib/supabase/get-profile"
+import { saveSampleCellSchema, setEmployeeAbsentSchema } from "@/lib/validations/roster"
 
 async function requireAdmin() {
   const profile = await getProfile()
@@ -42,11 +43,16 @@ export async function saveSampleCell(
   const { profile, error: authError } = await requireAdmin()
   if (!profile) return { error: authError }
 
+  const parsed = saveSampleCellSchema.safeParse({ cycleId, employeeId, testTypeId, vialReference })
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." }
+  }
+
   const { error: cycleError } = await requireTestingCycle(cycleId)
   if (cycleError) return { error: cycleError }
 
   const supabase = await createClient()
-  const trimmed = vialReference.trim()
+  const trimmed = parsed.data.vialReference
 
   if (!trimmed) {
     const { error } = await supabase
@@ -111,6 +117,11 @@ export async function setEmployeeAbsent(
 ): Promise<SetEmployeeAbsentResult> {
   const { profile, error: authError } = await requireAdmin()
   if (!profile) return { error: authError }
+
+  const parsed = setEmployeeAbsentSchema.safeParse({ cycleId, employeeId, absent })
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." }
+  }
 
   const { error: cycleError } = await requireTestingCycle(cycleId)
   if (cycleError) return { error: cycleError }

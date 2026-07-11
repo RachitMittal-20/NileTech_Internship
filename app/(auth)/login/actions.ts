@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 
 import { checkRateLimit } from "@/lib/rate-limit"
 import { createClient } from "@/lib/supabase/server"
+import { logAudit } from "@/lib/audit"
 
 export interface LoginState {
   error?: string
@@ -57,9 +58,17 @@ export async function login(
   }
 
   if (!profile.is_active) {
+    await logAudit({ id: data.user.id, role: profile.role }, "login_blocked_deactivated", "profiles", data.user.id, {
+      email,
+      ip,
+    })
     await supabase.auth.signOut()
     return { error: "This account has been deactivated. Contact your administrator." }
   }
+
+  // Supabase's own auth.audit_log_entries isn't populated in this project
+  // (verified empty), so this is the only record of who signed in and when.
+  await logAudit({ id: data.user.id, role: profile.role }, "login", "profiles", data.user.id, { email, ip })
 
   const dashboard = profile.role === "admin" ? "/admin/dashboard" : "/portal/dashboard"
   redirect(next && next.startsWith("/") ? next : dashboard)

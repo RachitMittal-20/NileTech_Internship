@@ -14,3 +14,8 @@ export const testCycleFormSchema = z.object({
 })
 
 export type TestCycleFormValues = z.infer<typeof testCycleFormSchema>
+
+export const advanceTestCycleStatusSchema = z.object({
+  id: z.string().uuid(),
+  to: z.enum(["scheduled", "testing", "at_lab", "results_entry", "review", "broadcast", "complete"]),
+})
