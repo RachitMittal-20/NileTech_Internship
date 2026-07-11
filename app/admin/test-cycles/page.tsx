@@ -2,9 +2,11 @@ import type { Metadata } from "next"
 
 import { TestCyclesToolbar } from "@/components/admin/test-cycles/test-cycles-toolbar"
 import { TestCyclesTable } from "@/components/admin/test-cycles/test-cycles-table"
+import { PendingRequestsBadge } from "@/components/admin/test-cycles/pending-requests-badge"
 import { ListPagination } from "@/components/shared/list-pagination"
 import { getTestCyclesList } from "@/lib/data/test-cycles"
 import { getAllOrganisationsForSelect } from "@/lib/data/employees"
+import { getPendingCycleRequests } from "@/lib/data/cycle-requests-admin"
 import type { TestCycleStatus } from "@/lib/test-cycle-status"
 import { STATUS_PIPELINE } from "@/lib/test-cycle-status"
 
@@ -30,7 +32,7 @@ export default async function TestCyclesPage({
   const page = Math.max(1, Number(params.page) || 1)
   const pageSize = 15
 
-  const [{ rows, total }, organisations] = await Promise.all([
+  const [{ rows, total }, organisations, pendingRequests] = await Promise.all([
     getTestCyclesList({
       status,
       orgId: orgFilter || undefined,
@@ -40,15 +42,19 @@ export default async function TestCyclesPage({
       pageSize,
     }),
     getAllOrganisationsForSelect(),
+    getPendingCycleRequests(),
   ])
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Test Cycles</h1>
-        <p className="text-sm text-muted-foreground">
-          Scheduled and in-progress testing cycles across all organisations.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Test Cycles</h1>
+          <p className="text-sm text-muted-foreground">
+            Scheduled and in-progress testing cycles across all organisations.
+          </p>
+        </div>
+        <PendingRequestsBadge requests={pendingRequests} />
       </div>
 
       <TestCyclesToolbar
