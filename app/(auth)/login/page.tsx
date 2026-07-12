@@ -1,7 +1,8 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 
-import { AuthCard } from "@/components/auth/auth-card"
+import { LoginLeftPanel } from "@/components/login/login-left-panel"
+import { LoginRightPanel } from "./login-right-panel"
 import { LoginForm } from "./login-form"
 
 export const metadata: Metadata = {
@@ -20,19 +21,24 @@ export default async function LoginPage({
       : undefined
 
   return (
-    <AuthCard
-      title="Sign in"
-      description="Enter your email and password to access your account."
-      footer={
-        <span>
-          Forgot your password?{" "}
-          <Link href="/forgot-password" className="font-medium text-foreground underline underline-offset-4">
-            Reset it
-          </Link>
-        </span>
-      }
-    >
-      <LoginForm next={next} initialError={initialError} />
-    </AuthCard>
+    <div className="flex min-h-screen">
+      <div className="hidden lg:flex lg:w-[55%]">
+        <LoginLeftPanel />
+      </div>
+      <div className="flex w-full items-center justify-center bg-[#F8FAFC] p-8 lg:w-[45%]">
+        <LoginRightPanel>
+          <LoginForm next={next} initialError={initialError} />
+          <p className="mt-4 text-center text-sm text-slate-500">
+            Forgot your password?{" "}
+            <Link
+              href="/forgot-password"
+              className="text-teal-600 underline-offset-2 hover:text-teal-700 hover:underline"
+            >
+              Reset it
+            </Link>
+          </p>
+        </LoginRightPanel>
+      </div>
+    </div>
   )
 }
