@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <BreadcrumbLabelProvider>
       <SidebarProvider defaultOpen={sidebarOpen}>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="admin-bg">
           <SiteHeader profile={profile} />
           <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
             <AdminPageTransition>{children}</AdminPageTransition>

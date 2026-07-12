@@ -89,8 +89,8 @@
   --warning: #b45309;
   --warning-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
   --ring: #0d9488;
 
   --chart-1: #0b2545;
@@ -250,4 +250,53 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgb(255 255 255 / 0.2);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Cards lift off the app's slightly gray page background instead of
+   blending into it. */
+[data-slot="card"] {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Very subtle alternating row tint so dense tables read more easily. */
+[data-slot="table-row"]:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+/* Whisper-quiet animated backdrop for the admin and portal shells — teal
+   and navy radial gradients at 5-6% opacity, shifting slowly. Admin sits on
+   a cooler gray (#f4f6f9); portal keeps its slightly warmer, lighter tone
+   (#f8fafc). */
+@keyframes bgShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.admin-bg {
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(13, 148, 136, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(11, 37, 69, 0.06) 0%, transparent 55%),
+    #f4f6f9;
+  background-size: 200% 200%;
+  animation: bgShift 14s ease infinite;
+}
+.portal-bg {
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(13, 148, 136, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(11, 37, 69, 0.06) 0%, transparent 55%),
+    #f8fafc;
+  background-size: 200% 200%;
+  animation: bgShift 14s ease infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-bg,
+  .portal-bg {
+    animation: none;
+  }
 }

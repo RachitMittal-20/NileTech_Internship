@@ -29,7 +29,7 @@ export default async function PortalLayout({ children }: { children: React.React
 
   return (
     <MobileNavProvider>
-      <div className="flex min-h-dvh bg-background">
+      <div className="portal-bg flex min-h-dvh">
         <PortalSidebar />
         <PortalMobileSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
