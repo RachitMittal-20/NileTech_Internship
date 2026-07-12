@@ -252,51 +252,57 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Cards lift off the app's slightly gray page background instead of
-   blending into it. */
+/* Cards lift off the app's richer page background instead of blending
+   into it. */
 [data-slot="card"] {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 2px 8px rgba(11, 37, 69, 0.1),
+    0 0 0 1px rgba(11, 37, 69, 0.06);
 }
 
-/* Very subtle alternating row tint so dense tables read more easily. */
+/* Alternating row tint so dense tables read more easily. */
 [data-slot="table-row"]:nth-child(even) {
-  background-color: #fafbfc;
+  background-color: rgba(11, 37, 69, 0.03);
 }
 
-/* Whisper-quiet animated backdrop for the admin and portal shells — teal
-   and navy radial gradients at 5-6% opacity, shifting slowly. Admin sits on
-   a cooler gray (#f4f6f9); portal keeps its slightly warmer, lighter tone
-   (#f8fafc). */
+/* Animated backdrop for the admin and portal shells — teal and navy radial
+   gradients shifting slowly. Admin sits on a cooler gray (#e8edf5); portal
+   keeps its slightly warmer, lighter tone (#eef2f7). */
 @keyframes bgShift {
   0% {
-    background-position: 0% 50%;
+    background-position: 0% 30%;
   }
-  50% {
-    background-position: 100% 50%;
+  33% {
+    background-position: 100% 60%;
+  }
+  66% {
+    background-position: 50% 100%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0% 30%;
   }
 }
 .admin-bg {
   background:
-    radial-gradient(ellipse at 15% 50%, rgba(13, 148, 136, 0.05) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 20%, rgba(11, 37, 69, 0.06) 0%, transparent 55%),
-    #f4f6f9;
-  background-size: 200% 200%;
-  animation: bgShift 14s ease infinite;
+    radial-gradient(ellipse at 15% 50%, rgba(13, 148, 136, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(11, 37, 69, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 85%, rgba(13, 148, 136, 0.08) 0%, transparent 50%),
+    #e8edf5;
+  background-size: 300% 300%;
+  animation: bgShift 10s ease infinite;
 }
 .portal-bg {
   background:
-    radial-gradient(ellipse at 15% 50%, rgba(13, 148, 136, 0.05) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 20%, rgba(11, 37, 69, 0.06) 0%, transparent 55%),
-    #f8fafc;
-  background-size: 200% 200%;
-  animation: bgShift 14s ease infinite;
+    radial-gradient(ellipse at 80% 30%, rgba(13, 148, 136, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 70%, rgba(11, 37, 69, 0.1) 0%, transparent 55%),
+    #eef2f7;
+  background-size: 300% 300%;
+  animation: bgShift 10s ease infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .admin-bg,
   .portal-bg {
     animation: none;
+    background-size: 100% 100%;
   }
 }
