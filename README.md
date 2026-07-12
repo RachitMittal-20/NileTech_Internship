@@ -12,6 +12,22 @@ Built on Next.js 15 (App Router) and Supabase (Postgres + Auth + Storage),
 with Row Level Security as the actual security boundary — not just an
 app-layer convention.
 
+## 🚀 Live Demo
+
+**[https://strongpath-diagnostics.vercel.app](https://strongpath-diagnostics.vercel.app)**
+
+### Admin Access
+| URL | Email | Password |
+|-----|-------|----------|
+| [/login](https://strongpath-diagnostics.vercel.app/login) | admin@strongpathdiagnostics.com | *available on request* |
+
+### Client Portal Access
+| URL | Email | Password |
+|-----|-------|----------|
+| [/portal](https://strongpath-diagnostics.vercel.app/portal) | demo-apex@strongpathdiagnostics.example | *available on request* |
+| [/portal](https://strongpath-diagnostics.vercel.app/portal) | demo-meridian@strongpathdiagnostics.example | *available on request* |
+| [/portal](https://strongpath-diagnostics.vercel.app/portal) | demo-sunrise@strongpathdiagnostics.example | *available on request* |
+
 ## Screenshots
 
 <!-- SCREENSHOT: admin-dashboard -->
