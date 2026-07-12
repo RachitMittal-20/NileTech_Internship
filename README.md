@@ -30,12 +30,12 @@ app-layer convention.
 
 ## Screenshots
 
-<!-- SCREENSHOT: admin-dashboard -->
-<!-- SCREENSHOT: test-cycle-wizard -->
-<!-- SCREENSHOT: result-entry -->
-<!-- SCREENSHOT: broadcast-compose -->
-<!-- SCREENSHOT: portal-dashboard -->
-<!-- SCREENSHOT: portal-results -->
+| | |
+|---|---|
+| **Landing page** ![Landing page](docs/screenshots/landing.png) | **Login** ![Login](docs/screenshots/login.png) |
+| **Admin dashboard** ![Admin dashboard](docs/screenshots/admin-dashboard.png) | **New test cycle wizard** ![Test cycle wizard](docs/screenshots/test-cycle-wizard.png) |
+| **Result entry** ![Result entry](docs/screenshots/result-entry.png) | **Broadcasting** ![Broadcast](docs/screenshots/broadcast-compose.png) |
+| **Client portal dashboard** ![Portal dashboard](docs/screenshots/portal-dashboard.png) | **Client portal results** ![Portal results](docs/screenshots/portal-results.png) |
 
 ## Architecture
 
